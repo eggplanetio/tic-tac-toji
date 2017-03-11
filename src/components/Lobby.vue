@@ -14,7 +14,7 @@
 
 <script>
 import store from '../store'
-import gameCoordinator from '../../lib/game-coordinator'
+import lobby from '../../lib/lobby'
 
 import { mapState, mapGetters } from 'vuex'
 
@@ -23,7 +23,7 @@ export default {
     challenge () {
       const userId = store.getters.currentUser.id;
       const otherId = store.getters.otherUser.id;
-      gameCoordinator.challengeUser(otherId)
+      lobby.challengeUser(otherId)
     }
   },
 

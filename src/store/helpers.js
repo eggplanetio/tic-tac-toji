@@ -1,12 +1,13 @@
 import store from './index'
 
-
-
 export default {
 
   findUserById(id) {
-    console.log('store users', id)
     return store.state.users[id]
+  },
+
+  findGameByOpponentId(id) {
+        return store.state.games[id]
   }
 
 }

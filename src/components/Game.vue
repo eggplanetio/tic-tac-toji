@@ -28,19 +28,18 @@
 <script>
   import Game from '../../lib/game'
   import store from '../store'
+  import helpers from '../store/helpers'
 
   export default {
     created () {
-      // try to find a game between these 2
-      // if not find, create one.
+      // debugger
+      // this.game = helpers.findGameByOpponentId($route.params.id)
 
-      // this.game = new Game('1', '2')
-      // store.commit('ADD_GAME', game)
     },
 
     methods: {
       makeMove(x, y) {
-        console.log(x, y)
+        // this.game.makeMove(x,y)
       }
     },
     head: {

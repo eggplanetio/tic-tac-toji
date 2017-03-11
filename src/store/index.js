@@ -20,9 +20,10 @@ function mergeUser (user, newData) {
 const store = new Vuex.Store({
 
   state: {
-    games: [],
+    games: {},
     peers: [ /* { id: 123 } */ ],
-    users: {}
+    users: {},
+    invitations: {}
   },
 
   actions: {
@@ -30,9 +31,7 @@ const store = new Vuex.Store({
 
   mutations: {
     ADD_OR_UPDATE_USER: (state, newUser) => {
-      if (!newUser.sessionIds) {
-        newUser.sessionIds = []
-      }
+      if (!newUser.sessionIds) { newUser.sessionIds = [] }
       const user = state.users[newUser.id]
       if (!user) {
         Vue.set(state.users, newUser.id, newUser)
@@ -42,13 +41,23 @@ const store = new Vuex.Store({
     },
 
     CREATE_CURRENT_USER: (state) => {
-      console.log('CREATE_CURRENT_USER', userId)
       Vue.set(state.users, userId, { id: userId, sessionIds: [] })
     },
 
     UPDATE_CURRENT_USER: (state, user) => {
-      console.log('UPDATE_CURRENT_USER', userId)
       Vue.set(state.users, userId, Object.assign(state.users[userId], user))
+    },
+
+    CREATE_OR_UPDATE_GAME: (state, game) => {
+      Vue.set(state.games, game.opponent.id, game)
+    },
+
+    ADD_INVITIATION: (state, fromPlayerId, channelName) => {
+      Vue.set(state.invitations, fromPlayerId, channelName)
+    },
+
+    REMOVE_INVITATION: (state, fromPlayerId) => {
+      Vue.delete(state.invitations, fromPlayerId)
     }
   },
 
