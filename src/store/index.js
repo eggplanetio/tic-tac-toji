@@ -3,13 +3,24 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-const userId = window.location.hostname === 'localhost' ? '💩' : '😈'
+const userId = window.location.hostname === '0.0.0.0' ? '💩' : '😈'
+
+function mergeUser (user, newData) {
+  if (newData.sessionId) {
+    newData.sessionIds = [ newData.sessionId ]
+    delete newData.sessionId
+  }
+  let sessionIds = [ ...user.sessionIds, ...newData.sessionIds ]
+  sessionIds = [...new Set(sessionIds)]
+  let newUser = Object.assign(user, newData)
+  newUser.sessionIds = sessionIds
+  return newUser
+}
 
 const store = new Vuex.Store({
+
   state: {
     games: [],
-    boards: [],
-    moves: [],
     peers: [ /* { id: 123 } */ ],
     users: {}
   },
@@ -18,44 +29,43 @@ const store = new Vuex.Store({
   },
 
   mutations: {
-    ADD_PEERS: (state, peers) => {
-      state.peers = state.peers.concat(peers)
-    },
-
-    ADD_PEER: (state, peer) => {
-      state.peers.push(peer)
-    },
-
     ADD_OR_UPDATE_USER: (state, newUser) => {
+      if (!newUser.sessionIds) {
+        newUser.sessionIds = []
+      }
       const user = state.users[newUser.id]
       if (!user) {
-        state.users[newUser.id] = newUser
+        Vue.set(state.users, newUser.id, newUser)
+      } else {
+        Vue.set(state.users, newUser.id, mergeUser(user, newUser))
       }
     },
 
     CREATE_CURRENT_USER: (state) => {
-      const users = state.users
-      users[userId] = { id: userId }
-      state.users = users
+      console.log('CREATE_CURRENT_USER', userId)
+      Vue.set(state.users, userId, { id: userId, sessionIds: [] })
     },
 
     UPDATE_CURRENT_USER: (state, user) => {
-      const users = state.users
-      users[userId] = Object.assign(users[userId], user)
-      state.users = users
+      console.log('UPDATE_CURRENT_USER', userId)
+      Vue.set(state.users, userId, Object.assign(state.users[userId], user))
     }
-
   },
 
   getters: {
     currentUser (state) {
       return state.users[userId]
     },
+    
     otherUser (state) {
       const ids = Object.keys(state.users)
       const id = ids.find(id => id !== userId)
       return state.users[id]
-    }
+    },
+
+    userCount (state) {
+      return Object.keys(state.users).length
+    },
   }
 
 })
