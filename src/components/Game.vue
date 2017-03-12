@@ -2,24 +2,14 @@
   <div>
     <h1> {{ $route.params.id }}</h1>
 
-    <table>
-      <tr>
-        <td><button @click="makeMove(1,1)">1,1</button></td>
-        <td><button @click="makeMove(1,2)">1,2</button></td> 
-        <td><button @click="makeMove(1,3)">1,3</button></td>
+    <table v-if="game">
+
+      <tr v-for="(row, i) in game.boardState">
+        <td v-for="(col, j) in row">
+        <button @click="makeMove(i,j)">{{i}},{{j}}</button></td>
+        </td>
       </tr>
 
-      <tr>
-        <td><button @click="makeMove(2,1)">2,1</button></td>
-        <td><button @click="makeMove(2,2)">2,2</button></td> 
-        <td><button @click="makeMove(2,3)">2,3</button></td>
-      </tr>
-
-      <tr>
-        <td><button @click="makeMove(3,1)">3,1</button></td>
-        <td><button @click="makeMove(3,2)">3,2</button></td> 
-        <td><button @click="makeMove(3,3)">3,3</button></td>
-      </tr>
     </table>
 
   </div>
@@ -29,17 +19,40 @@
   import Game from '../../lib/game'
   import store from '../store'
   import helpers from '../store/helpers'
+  import router from '../../src/router'
+
 
   export default {
-    created () {
-      // debugger
-      // this.game = helpers.findGameByOpponentId($route.params.id)
 
+    data() {
+      return {
+        game: null
+      }
+    },
+
+    watch: {
+    // call again the method if the route changes
+    '$route': 'fetchData'
+    },
+
+    created () {
+      this.fetchData()
     },
 
     methods: {
       makeMove(x, y) {
         // this.game.makeMove(x,y)
+      },
+      fetchData() {
+        let ids = this.$route.params.id.split('vs')
+        this.game = helpers.findGameByOpponentId(ids[1])
+        if (!this.game) {
+          console.log(`Game not found: ${ids[1]}`)
+          router.push({ name: 'Lobby'})
+        } else {
+          console.log('Game found:', this.game)
+          console.log('Board State:', this.game.boardState)
+        }
       }
     },
     head: {
