@@ -2,11 +2,18 @@
   <div>
     <h1> {{ $route.params.id }}</h1>
 
-    <table v-if="game">
+    <table v-if="game && game.accepted">
+    <thead>
+      <tr>
+        <th colspan="3">Current Player: {{game.currentTurnPlayerId}}</th>
+      </tr>
+    </thead>
 
       <tr v-for="(row, i) in game.boardState">
         <td v-for="(col, j) in row">
-        <button @click="makeMove(i,j)">{{i}},{{j}}</button></td>
+          <button v-if="!col" @click="makeMove(i,j)">{{i}},{{j}}</button>
+          <button v-else>{{col}}</button>
+        </td>
         </td>
       </tr>
 
@@ -32,7 +39,8 @@
 
     watch: {
     // call again the method if the route changes
-    '$route': 'fetchData'
+    '$route': 'fetchData',
+    'game': 'fetchData'
     },
 
     created () {
@@ -41,7 +49,8 @@
 
     methods: {
       makeMove(x, y) {
-        // this.game.makeMove(x,y)
+        this.game.makeMove(x,y)
+        this.fetchData()
       },
       fetchData() {
         let ids = this.$route.params.id.split('vs')
