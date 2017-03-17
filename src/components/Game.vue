@@ -5,7 +5,8 @@
     <table v-if="game && game.accepted">
     <thead>
       <tr>
-        <th colspan="3">Turn: {{game.currentTurnPlayerId}}</th>
+        <th colspan="3" v-if="yourTurn">Your turn – {{game.currentTurnPlayerId}}</th>
+        <th colspan="3" v-else>Their turn – {{game.currentTurnPlayerId}}</th>
       </tr>
     </thead>
 
@@ -47,12 +48,16 @@
     },
 
     computed: {
-      ...mapGetters([ 'currentUser' ])
+      ...mapGetters([ 'currentUser' ]),
+
+      yourTurn() {
+        return this.game.currentTurnPlayerId === this.currentUser.id;
+      }
     },
 
     methods: {
       makeMove(x, y) {
-        if (this.game.currentTurnPlayerId === this.currentUser.id) {
+        if (this.yourTurn) {
           this.game.makeMove(x,y)
         } else {
           alert("It isn't your turn.")
