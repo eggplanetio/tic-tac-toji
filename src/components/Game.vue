@@ -49,6 +49,7 @@
 
     methods: {
       makeMove(x, y) {
+        this.fetchData()
         this.game.makeMove(x,y)
         this.fetchData()
       },
