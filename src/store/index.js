@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import Errors from '../../lib/errors'
 
 Vue.use(Vuex)
 
@@ -50,16 +51,23 @@ const store = new Vuex.Store({
 
     CREATE_OR_UPDATE_GAME: (state, game) => {
       Vue.set(state.games, game.opponent.id, game)
+
+      Vue.set(game, 'initialized', game.initialized)
+      Vue.set(game, 'accepted', game.accepted)
+      Vue.set(game, 'boardState', game.boardState)
+      Vue.set(game, 'currentTurnPlayerId', game.currentTurnPlayerId)
     },
 
     UPDATE_GAME_BOARDSTATE: (state, { opponentId, boardState, currentTurnPlayerId }) => {
       let game = store.state.games[opponentId]
+      if (!game) { throw new Errors.GameNotFound() }
       Vue.set(game, 'boardState', boardState)
       Vue.set(game, 'currentTurnPlayerId', currentTurnPlayerId)
     },
 
     MAKE_MOVE_FOR_GAME: (state, { id, opponentId, x, y }) => {
       const game = store.state.games[opponentId]
+      if (!game) { throw new Errors.GameNotFound() }
       let boardState = game.boardState
       boardState[x][y] = id
       Vue.set(game, 'boardState', boardState)
