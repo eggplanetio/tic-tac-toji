@@ -5,7 +5,7 @@
     <table v-if="game && game.accepted">
     <thead>
       <tr>
-        <th colspan="3">Current Player: {{game.currentTurnPlayerId}}</th>
+        <th colspan="3">Turn: {{game.currentTurnPlayerId}}</th>
       </tr>
     </thead>
 
@@ -23,52 +23,44 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import Game from '../../lib/game'
   import store from '../store'
   import helpers from '../store/helpers'
   import router from '../../src/router'
 
-
   export default {
 
-    data() {
-      return {
-        game: null
-      }
-    },
-
-    watch: {
-    // call again the method if the route changes
-    '$route': 'fetchData',
-    'game': 'fetchData'
-    },
-
-    created () {
-      this.fetchData()
-    },
-
-    methods: {
-      makeMove(x, y) {
-        this.fetchData()
-        this.game.makeMove(x,y)
-        this.fetchData()
-      },
-      fetchData() {
-        let ids = this.$route.params.id.split('vs')
-        this.game = helpers.findGameByOpponentId(ids[1])
-        if (!this.game) {
-          console.log(`Game not found: ${ids[1]}`)
-          router.push({ name: 'Lobby'})
-        } else {
-          console.log('Game found:', this.game)
-          console.log('Board State:', this.game.boardState)
-        }
-      }
-    },
     head: {
       title () {
         return { inner: this.$route.params.id }
       },
+    },
+
+    data() {
+      let ids = this.$route.params.id.split('vs')
+      return {
+        game: helpers.findGameByOpponentId(ids[1])
+      }
+    },
+
+    methods: {
+      makeMove(x, y) {
+        this.game.makeMove(x,y)
+      },
+      // fetchData() {
+      //   let ids = this.$route.params.id.split('vs')
+
+      //   Vue.set(this, 'game', helpers.findGameByOpponentId(ids[1]))
+
+      //   if (!this.game) {
+      //     console.log(`Game not found: ${ids[1]}`)
+      //     router.push({ name: 'Lobby'})
+      //   } else {
+      //     console.log('Game found:', this.game)
+      //     console.log('Board State:', this.game.boardState)
+      //   }
+      // }
     }
   }
 </script>

@@ -52,6 +52,20 @@ const store = new Vuex.Store({
       Vue.set(state.games, game.opponent.id, game)
     },
 
+    UPDATE_GAME_BOARDSTATE: (state, { opponentId, boardState, currentTurnPlayerId }) => {
+      let game = store.state.games[opponentId]
+      Vue.set(game, 'boardState', boardState)
+      Vue.set(game, 'currentTurnPlayerId', currentTurnPlayerId)
+    },
+
+    MAKE_MOVE_FOR_GAME: (state, { id, opponentId, x, y }) => {
+      const game = store.state.games[opponentId]
+      let boardState = game.boardState
+      boardState[x][y] = id
+      Vue.set(game, 'boardState', boardState)
+      Vue.set(game, 'currentTurnPlayerId', opponentId)
+    },
+
     ADD_INVITIATION: (state, fromPlayerId, channelName) => {
       Vue.set(state.invitations, fromPlayerId, channelName)
     },
@@ -65,7 +79,7 @@ const store = new Vuex.Store({
     currentUser (state) {
       return state.users[userId]
     },
-    
+
     otherUser (state) {
       const ids = Object.keys(state.users)
       const id = ids.find(id => id !== userId)

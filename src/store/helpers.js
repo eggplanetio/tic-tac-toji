@@ -7,7 +7,7 @@ export default {
   },
 
   findGameByOpponentId(id) {
-        return store.state.games[id]
+    return store.state.games[id]
   }
 
 }
