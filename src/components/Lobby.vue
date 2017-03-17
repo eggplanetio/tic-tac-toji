@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>The Lobby - {{ currentUser.id }}</h1>
-    
+
     <ul v-for="user in users">
       {{ user.id }}
     </ul>

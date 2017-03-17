@@ -29,6 +29,8 @@
   import helpers from '../store/helpers'
   import router from '../../src/router'
 
+  import { mapGetters } from 'vuex'
+
   export default {
 
     head: {
@@ -38,29 +40,24 @@
     },
 
     data() {
-      let ids = this.$route.params.id.split('vs')
+      let id = this.$route.params.id.split('vs')[1]
       return {
-        game: helpers.findGameByOpponentId(ids[1])
+        game: helpers.findGameByOpponentId(id)
       }
+    },
+
+    computed: {
+      ...mapGetters([ 'currentUser' ])
     },
 
     methods: {
       makeMove(x, y) {
-        this.game.makeMove(x,y)
+        if (this.game.currentTurnPlayerId === this.currentUser.id) {
+          this.game.makeMove(x,y)
+        } else {
+          alert("It isn't your turn.")
+        }
       },
-      // fetchData() {
-      //   let ids = this.$route.params.id.split('vs')
-
-      //   Vue.set(this, 'game', helpers.findGameByOpponentId(ids[1]))
-
-      //   if (!this.game) {
-      //     console.log(`Game not found: ${ids[1]}`)
-      //     router.push({ name: 'Lobby'})
-      //   } else {
-      //     console.log('Game found:', this.game)
-      //     console.log('Board State:', this.game.boardState)
-      //   }
-      // }
     }
   }
 </script>
